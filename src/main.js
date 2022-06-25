@@ -64,14 +64,14 @@ var randomCoordinates = () => {
       placeIndex = getRandomInt(0, places.length);
   }
   previousPlaceIndex = placeIndex;
-  return places.pop(placeIndex);
+  return places.splice(placeIndex, 1)[0];
 };
 
 // Загадывает новую случайную точку и помещает её на карту
 var makeGuess = () => {
   guessCoordinates = randomCoordinates();
   image.src = guessCoordinates.href;
-  // guessMarker = new L.circleMarker(guessCoordinates).addTo(map);
+  guessMarker = new L.circleMarker(guessCoordinates).addTo(map);
 }
 
 initializeMap();
@@ -89,7 +89,7 @@ sureButton.addEventListener('click', () => {
     output.innerHTML = 'Ура! Вы набрали: ' + scores;
     restartButton.classList.remove("d-none");
   }
-  // map.removeLayer(guessMarker);
+  map.removeLayer(guessMarker);
   makeGuess();
 });
 
