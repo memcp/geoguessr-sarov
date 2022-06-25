@@ -1,4 +1,4 @@
-import places from "./places.js"
+import places from './places.js';
 
 var output = document.querySelector('.output');
 var image = document.querySelector('img.place');
@@ -10,6 +10,7 @@ var guessMarker;
 var previousPlaceIndex = null;
 var scores = 0;
 
+output.innerHTML = 'Перетащите маркер!';
 
 // Инициализирует карту при старте/рестарте игры
 var initializeMap = () => {
@@ -61,7 +62,7 @@ var randomCoordinates = () => {
   placeIndex = getRandomInt(0, places.length);
 
   while (previousPlaceIndex === placeIndex && places.length > 1) {
-      placeIndex = getRandomInt(0, places.length);
+    placeIndex = getRandomInt(0, places.length);
   }
   previousPlaceIndex = placeIndex;
   return places.splice(placeIndex, 1)[0];
@@ -72,23 +73,29 @@ var makeGuess = () => {
   guessCoordinates = randomCoordinates();
   image.src = guessCoordinates.href;
   guessMarker = new L.circleMarker(guessCoordinates).addTo(map);
-}
+};
 
 initializeMap();
 var marker = L.marker([54.927536, 43.322868], { draggable: true }).addTo(map);
 makeGuess();
+
+marker.on('drag', () => {
+  var { lat, lng } = marker.getLatLng();
+  output.innerHTML = lat.toFixed(6) + ', ' + lng.toFixed(6);
+});
 
 sureButton.addEventListener('click', () => {
   var currentPlace = marker.getLatLng();
   var distance = map.distance(currentPlace, guessCoordinates);
   console.log(currentPlace);
   scores += calculateScore(distance);
-  output.innerHTML = 'Очки: ' + scores;
+  output.innerHTML = 'Текущие очки: ' + scores;
 
   if (places.length === 0) {
-    output.innerHTML = 'Ура! Вы набрали: ' + scores;
-    restartButton.classList.remove("d-none");
+    output.innerHTML = 'Ура! Вы набрали ' + scores + ' очков.';
+    restartButton.classList.remove('d-none');
   }
+
   map.removeLayer(guessMarker);
   makeGuess();
 });
