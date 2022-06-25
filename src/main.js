@@ -72,7 +72,6 @@ var randomCoordinates = () => {
 var makeGuess = () => {
   guessCoordinates = randomCoordinates();
   image.src = guessCoordinates.href;
-  guessMarker = new L.circleMarker(guessCoordinates).addTo(map);
 };
 
 initializeMap();
@@ -87,7 +86,6 @@ marker.on('drag', () => {
 sureButton.addEventListener('click', () => {
   var currentPlace = marker.getLatLng();
   var distance = map.distance(currentPlace, guessCoordinates);
-  console.log(currentPlace);
   scores += calculateScore(distance);
   output.innerHTML = 'Текущие очки: ' + scores;
 
@@ -95,8 +93,6 @@ sureButton.addEventListener('click', () => {
     output.innerHTML = 'Ура! Вы набрали ' + scores + ' очков.';
     restartButton.classList.remove('d-none');
   }
-
-  map.removeLayer(guessMarker);
   makeGuess();
 });
 
