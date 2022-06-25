@@ -64,6 +64,7 @@ var randomCoordinates = () => {
   while (previousPlaceIndex === placeIndex && places.length > 1) {
     placeIndex = getRandomInt(0, places.length);
   }
+
   previousPlaceIndex = placeIndex;
   return places.splice(placeIndex, 1)[0];
 };
