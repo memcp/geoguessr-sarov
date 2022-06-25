@@ -2,6 +2,8 @@ import places from "./places.js"
 
 var output = document.querySelector('.output');
 var image = document.querySelector('img.place');
+var sureButton = document.querySelector('.sure');
+var restartButton = document.querySelector('.restart');
 var map;
 var guessCoordinates;
 var guessMarker;
@@ -58,11 +60,11 @@ var randomCoordinates = () => {
   var placeIndex;
   placeIndex = getRandomInt(0, places.length);
 
-  while (previousPlaceIndex === placeIndex) {
+  while (previousPlaceIndex === placeIndex && places.length > 1) {
       placeIndex = getRandomInt(0, places.length);
   }
   previousPlaceIndex = placeIndex;
-  return places[placeIndex];
+  return places.pop(placeIndex);
 };
 
 // Загадывает новую случайную точку и помещает её на карту
@@ -73,17 +75,22 @@ var makeGuess = () => {
 }
 
 initializeMap();
-var marker = L.marker([54.921, 43.348], { draggable: true }).addTo(map);
+var marker = L.marker([54.927536, 43.322868], { draggable: true }).addTo(map);
 makeGuess();
 
-marker.on('moveend', () => {
+sureButton.addEventListener('click', () => {
   var currentPlace = marker.getLatLng();
   var distance = map.distance(currentPlace, guessCoordinates);
-  // console.log(currentPlace);
+  console.log(currentPlace);
   scores += calculateScore(distance);
-  output.innerHTML = 'Очки:' + scores;
+  output.innerHTML = 'Очки: ' + scores;
+
+  if (places.length === 0) {
+    output.innerHTML = 'Ура! Вы набрали: ' + scores;
+    restartButton.classList.remove("d-none");
+  }
   // map.removeLayer(guessMarker);
-  setTimeout(() => {
-    makeGuess();
-  }, 200);
+  makeGuess();
 });
+
+restartButton.addEventListener('click', () => location.reload());
