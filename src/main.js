@@ -110,6 +110,9 @@ marker.on('drag', () => {
 });
 
 sureButton.addEventListener('click', () => {
+  if (polyline) {
+    map.removeLayer(polyline);
+  }
   var currentPlace = marker.getLatLng();
   var distance = map.distance(currentPlace, guessCoordinates);
   scores += calculateScore(distance);
