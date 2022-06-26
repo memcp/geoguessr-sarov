@@ -55,6 +55,16 @@ button:hover {
   border:none;
 }
 
+.sure:disabled {
+  background-color: #bbbbbb;
+}
+
+.sure:disabled:hover {
+  background-color: #bbbbbb;
+  cursor: default;
+}
+
+
 .sure:hover {
   background-color: #269326;
 }

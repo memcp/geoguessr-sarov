@@ -7,6 +7,7 @@ var restartButton = document.querySelector('.restart');
 var map;
 var guessCoordinates;
 var guessMarker;
+var polyline;
 var previousPlaceIndex = null;
 var scores = 0;
 
@@ -75,11 +76,35 @@ var makeGuess = () => {
   image.src = guessCoordinates.href;
 };
 
+
+// Проверяет закончилась игра или нет
+var checkGameOver = (places) => {
+  if (places.length === 0) {
+    sureButton.disabled = true;
+    output.innerHTML = 'Ура! Вы набрали ' + scores + ' очков.';
+    restartButton.classList.remove('d-none');
+  }
+}
+
+// Показывает насколько точно игрок поднёс маркер к загаданной точке и рисует
+// линию
+var displayAccuracyDistance = (current, guess, distance) => {
+  var lineLatLng = [current, guess];
+  var tooltipText = distance.toFixed(2) + " метров";
+  polyline = L.polyline(lineLatLng, { color: 'dodgerblue' })
+    .bindTooltip(tooltipText)
+    .addTo(map);
+  polyline.openTooltip(polyline.getCenter());
+}
+
 initializeMap();
 var marker = L.marker([54.927536, 43.322868], { draggable: true }).addTo(map);
 makeGuess();
 
 marker.on('drag', () => {
+  if (polyline) {
+    map.removeLayer(polyline);
+  }
   var { lat, lng } = marker.getLatLng();
   output.innerHTML = lat.toFixed(6) + ', ' + lng.toFixed(6);
 });
@@ -89,11 +114,8 @@ sureButton.addEventListener('click', () => {
   var distance = map.distance(currentPlace, guessCoordinates);
   scores += calculateScore(distance);
   output.innerHTML = 'Текущие очки: ' + scores;
-
-  if (places.length === 0) {
-    output.innerHTML = 'Ура! Вы набрали ' + scores + ' очков.';
-    restartButton.classList.remove('d-none');
-  }
+  displayAccuracyDistance(currentPlace, guessCoordinates, distance);
+  checkGameOver(places);
   makeGuess();
 });
 
